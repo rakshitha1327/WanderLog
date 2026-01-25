@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+/* Base reset */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Default body style (dark-friendly) */
+body {
+  @apply bg-[#020617] text-white;
+}
+
+/* Fade-up animation for dashboard stats */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.animate-fadeIn {
+  animation: fadeUp 0.6s ease-out;
+}
+
+.stat-card {
+  @apply bg-[#020617] rounded-2xl p-6 shadow-xl border border-sky-900 cursor-pointer
+         animate-[fadeUp_0.8s_ease-out]
+         transform transition-all duration-300
+         hover:-translate-y-2 hover:scale-105
+         hover:shadow-sky-500/40 hover:shadow-2xl;
+}

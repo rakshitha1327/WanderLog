@@ -1,0 +1,72 @@
+:root {
+  --primary: #6c63ff;
+}
+
+.input {
+  width: 100%;
+  background: transparent;
+  border-bottom: 2px solid #4b5563;
+  color: white;
+  padding: 8px 0;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input:focus {
+  border-color: var(--primary);
+}
+
+.btn {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  padding: 12px;
+  border-radius: 9999px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.link {
+  color: var(--primary);
+  font-size: 14px;
+  text-decoration: underline;
+  margin-top: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.link:hover {
+  opacity: 0.8;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
+
+/* Flip card animation */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
