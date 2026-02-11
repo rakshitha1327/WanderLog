@@ -1,71 +1,46 @@
-// src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
+import { getUserEmail } from "../utils/auth";
 
-const Dashboard = () => {
+export default function Dashboard() {
   const navigate = useNavigate();
-
-  // Auth check
   const user = JSON.parse(localStorage.getItem("user"));
-  if (!user) {
-    navigate("/login");
-    return null;
-  }
 
   const [trips, setTrips] = useState([]);
 
-  // Animated counters
-  const [animatedTrips, setAnimatedTrips] = useState(0);
-  const [animatedCountries, setAnimatedCountries] = useState(0);
-  const [animatedPlaces, setAnimatedPlaces] = useState(0);
+  const userEmail = getUserEmail(user);
 
   useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const userEmail = user?.email || user?.userEmail;
-        if (!userEmail) return;
+    if (!userEmail) return;
 
-        const res = await API.get("/trips", {
-          params: { userEmail },
-        });
-        setTrips(res.data);
-      } catch (err) {
-        console.error("Failed to fetch trips", err);
-      }
-    };
-
-    fetchTrips();
+    API.get("/trips", { params: { userEmail } })
+      .then((res) => setTrips(res.data))
+      .catch((err) => console.error("Failed to load dashboard", err));
   }, [user]);
 
-  // Stats
+  /* ---------- ANALYTICS ---------- */
   const totalTrips = trips.length;
-  const placesVisited = trips.length;
 
-  const countriesVisited = new Set(
-    trips
-      .map((trip) => trip.location.split(",").pop()?.trim())
-      .filter(Boolean)
-  ).size;
+  // Calculate unique countries and total places visited
+  const uniqueCountries = new Set();
+  let totalPlacesVisited = 0;
 
-  // Counter animation
-  useEffect(() => {
-    let t = 0,
-      c = 0,
-      p = 0;
+  trips.forEach((trip) => {
+    if (trip.location) {
+      // Assuming location format "City, Country" or just "Country"
+      // We'll take the last part after a comma as the country
+      const parts = trip.location.split(",");
+      const country = parts[parts.length - 1].trim();
+      if (country) uniqueCountries.add(country);
+    }
 
-    const interval = setInterval(() => {
-      if (t < totalTrips) setAnimatedTrips(++t);
-      if (c < countriesVisited) setAnimatedCountries(++c);
-      if (p < placesVisited) setAnimatedPlaces(++p);
+    if (trip.placesVisited) {
+      totalPlacesVisited += trip.placesVisited.length;
+    }
+  });
 
-      if (t >= totalTrips && c >= countriesVisited && p >= placesVisited) {
-        clearInterval(interval);
-      }
-    }, 40);
-
-    return () => clearInterval(interval);
-  }, [totalTrips, countriesVisited, placesVisited]);
+  const totalCountries = uniqueCountries.size;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#020617] to-[#020617] text-white animate-fadeIn">
@@ -85,7 +60,7 @@ const Dashboard = () => {
           <div className="stat-card" title="Total number of trips you have added">
             <p className="text-gray-400 text-sm">Total Trips</p>
             <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold">{animatedTrips}</h2>
+              <h2 className="text-3xl font-bold">{totalTrips}</h2>
               <span className="text-4xl">🧭</span>
             </div>
           </div>
@@ -96,7 +71,7 @@ const Dashboard = () => {
           >
             <p className="text-gray-400 text-sm">Countries Visited</p>
             <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold">{animatedCountries}</h2>
+              <h2 className="text-3xl font-bold">{totalCountries}</h2>
               <span className="text-4xl">🌍</span>
             </div>
           </div>
@@ -107,7 +82,7 @@ const Dashboard = () => {
           >
             <p className="text-gray-400 text-sm">Places Visited</p>
             <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold">{animatedPlaces}</h2>
+              <h2 className="text-3xl font-bold">{totalPlacesVisited}</h2>
               <span className="text-4xl">🗺️</span>
             </div>
           </div>
@@ -128,28 +103,39 @@ const Dashboard = () => {
           <p className="text-gray-400">No trips yet. Start exploring ✈️</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {trips.map((trip) => (
-              <div
-                key={trip.id}
-                className="bg-[#020617] rounded-2xl shadow-lg overflow-hidden border border-sky-900 hover:-translate-y-1 hover:shadow-2xl transition-all"
-              >
-                <img
-                  src={trip.images?.[0]}
-                  alt={trip.title}
-                  className="w-full h-52 object-contain bg-black"
-                />
-                <div className="p-5">
-                  <h3 className="text-xl font-bold">{trip.title}</h3>
-                  <p className="text-gray-400">📍 {trip.location}</p>
-                  <p className="text-sm text-gray-500">🗓️ {trip.date}</p>
+            {trips.map((trip) => {
+              const cover = trip.coverImage || trip.images?.[0];
+              const tripId = trip.id || trip._id;
+
+              return (
+                <div
+                  key={tripId}
+                  onClick={() => navigate(`/trip/${tripId}`)}
+                  className="cursor-pointer bg-[#020617] rounded-2xl shadow-lg overflow-hidden border border-sky-900 hover:-translate-y-1 hover:shadow-2xl transition-all"
+                >
+                  {cover ? (
+                    <img
+                      src={cover}
+                      className="w-full h-52 object-contain bg-black"
+                      alt={trip.title}
+                    />
+                  ) : (
+                    <div className="w-full h-52 bg-black flex items-center justify-center text-gray-400">
+                      No Image
+                    </div>
+                  )}
+
+                  <div className="p-5">
+                    <h3 className="text-xl font-bold">{trip.title}</h3>
+                    <p className="text-gray-400">📍 {trip.location}</p>
+                    <p className="text-sm text-gray-500">🗓️ {trip.date}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
     </div>
   );
-};
-
-export default Dashboard;
+}

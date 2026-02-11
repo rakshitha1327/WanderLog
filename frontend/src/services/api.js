@@ -1,15 +1,47 @@
 import axios from "axios";
 
-const API = axios.create({
-  baseURL: "http://localhost:8080",
+const api = axios.create({
+  baseURL: "http://localhost:8080/api",
 });
 
-API.interceptors.request.use((req) => {
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
+  const user = localStorage.getItem("user");
+  console.log("API Request:", {
+    url: config.url,
+    method: config.method,
+    hasToken: !!token,
+    tokenPreview: token ? token.substring(0, 20) + "..." : "none",
+    hasUser: !!user
+  });
+  
   if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
-  return req;
+  return config;
 });
 
-export default API;
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("API Error:", {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      url: error.config?.url,
+      method: error.config?.method,
+      data: error.response?.data,
+      headers: error.config?.headers
+    });
+    
+    if (error.response?.status === 403) {
+      console.error("403 Forbidden - Authentication issue");
+      // Clear invalid token and redirect to login
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;

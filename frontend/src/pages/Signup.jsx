@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { registerUser } from "../services/authService";
 
-export default function Signup({ switchToLogin }) {
+export default function Signup() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -9,10 +11,20 @@ export default function Signup({ switchToLogin }) {
 
   const handleSignup = async () => {
     try {
-      await registerUser(username, email, password);
+      const data = await registerUser(username, email, password);
+      
+      console.log("Signup response:", data);
+      
+      // ✅ SAVE USER DATA
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
+
       alert("Registration successful 🎉");
-      switchToLogin();
+
+      // ✅ REDIRECT TO DASHBOARD
+      navigate("/dashboard");
     } catch (err) {
+      console.error("Signup error:", err);
       setError("Registration failed");
     }
   };
@@ -65,7 +77,7 @@ export default function Signup({ switchToLogin }) {
           Already have an account?
         </p>
 
-        <button onClick={switchToLogin} className="link">
+        <button onClick={() => navigate("/login")} className="link">
           Sign In
         </button>
       </div>

@@ -25,6 +25,10 @@ public class TripController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTrip);
     }
 
+    /**
+     * Get trips for a specific user (all trips - public and private)
+     * Used by: Dashboard, Explore (for listing all user trips)
+     */
     @GetMapping
     public ResponseEntity<List<Trip>> getTrips(@RequestParam(required = false) String userEmail) {
         if (userEmail != null && !userEmail.isEmpty()) {
@@ -33,6 +37,11 @@ public class TripController {
         return ResponseEntity.ok(service.getPublicTrips());
     }
 
+    /**
+     * Get public trips only (for Discover page and Explore map)
+     * Optional location filter for search
+     * Used by: Discover page, Explore map
+     */
     @GetMapping("/public")
     public ResponseEntity<List<Trip>> getPublicTrips(@RequestParam(required = false) String location) {
         if (location != null && !location.isEmpty()) {

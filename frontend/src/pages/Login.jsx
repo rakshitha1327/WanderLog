@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/authService";
 
-export default function Login({ switchToSignup }) {
+export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -9,15 +11,23 @@ export default function Login({ switchToSignup }) {
   const handleLogin = async () => {
     try {
       const data = await loginUser(email, password);
+      
+      console.log("Login response:", data);
 
       // ✅ SAVE JWT
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data));
+      
+      // ✅ DEBUG: Verify storage
+      console.log("Stored token:", localStorage.getItem("token"));
+      console.log("Stored user:", localStorage.getItem("user"));
 
       alert("Login successful ✅");
 
-      // 👉 later we will redirect to dashboard
+      // ✅ REDIRECT TO DASHBOARD
+      navigate("/dashboard");
     } catch (err) {
+      console.error("Login error:", err);
       setError("Invalid email or password");
     }
   };
@@ -56,7 +66,7 @@ export default function Login({ switchToSignup }) {
           Don’t have an account?
         </p>
 
-        <button onClick={switchToSignup} className="link">
+        <button onClick={() => navigate("/signup")} className="link">
           Sign Up
         </button>
       </div>
