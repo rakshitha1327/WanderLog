@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/auth";
+const API_URL = "https://wanderlog-backend-3nod.onrender.com";
 
 export const loginUser = async (email, password) => {
   const response = await axios.post(`${API_URL}/login`, {
