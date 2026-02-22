@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -28,8 +27,6 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
-
-    // ===================== REGISTER =====================
 
     public static class RegisterRequest {
         private String username;
@@ -68,8 +65,6 @@ public class AuthController {
                 .body(Map.of("message", "User registered successfully"));
     }
 
-    // ===================== LOGIN =====================
-
     public static class LoginRequest {
         private String email;
         private String password;
@@ -86,10 +81,9 @@ public class AuthController {
 
         User user = userRepository.findByEmail(request.getEmail()).orElse(null);
 
-        if (user == null || !passwordEncoder.matches(
-                request.getPassword(),
-                user.getPassword()
-        )) {
+        if (user == null ||
+                !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Invalid email or password"));
