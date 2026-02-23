@@ -87,9 +87,44 @@ export default function Auth() {
     }
   };
 
-  return (
-    <div>
-      {/* Keep your existing UI JSX below */}
-    </div>
-  );
+ return (
+  <div style={{ color: "white", padding: "40px" }}>
+    <h1>{isLogin ? "Login Page" : "Signup Page"}</h1>
+    <form onSubmit={handleSubmit}>
+      {!isLogin && (
+        <input
+          name="username"
+          placeholder="Username"
+          value={formData.username}
+          onChange={handleChange}
+        />
+      )}
+      <input
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+      />
+      <input
+        name="password"
+        type="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+      />
+      {!isLogin && (
+        <input
+          name="confirmPassword"
+          type="password"
+          placeholder="Confirm Password"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+        />
+      )}
+      <button type="submit">
+        {isLogin ? "Login" : "Register"}
+      </button>
+    </form>
+  </div>
+);
 }
