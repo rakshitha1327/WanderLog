@@ -27,11 +27,11 @@ export default function Auth() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, mode) => {
     e.preventDefault();
 
     try {
-      if (isLogin) {
+      if (mode === "login") {
         const response = await fetch(`${BASE_URL}/api/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -53,6 +53,7 @@ export default function Auth() {
 
         navigate("/dashboard");
       } else {
+        // Register mode
         if (formData.password !== formData.confirmPassword) {
           alert("Passwords do not match");
           return;
@@ -87,88 +88,104 @@ export default function Auth() {
 
   return (
     <div className="auth-bg">
-      <div className="auth-card">
+      <div className={`auth-card ${!isLogin ? "register-mode" : ""}`}>
 
-        <div className={`form-wrapper ${isLogin ? "show-login" : "show-register"}`}>
-
-          {/* LOGIN FORM */}
-          <form onSubmit={handleSubmit} className="form login-form">
-            <h2 className="form-title">Welcome Back</h2>
-
-            <input
-              className="auth-input"
-              type="email"
-              name="email"
-              placeholder="Email"
-              onChange={handleChange}
-              required
-            />
-
-            <input
-              className="auth-input"
-              type="password"
-              name="password"
-              placeholder="Password"
-              onChange={handleChange}
-              required
-            />
-
-            <button className="auth-btn">Login</button>
-
-            <p className="switch-text">
+        {/* LOGIN FORM */}
+        <div className="form-container login-container">
+          <div className="form-content">
+            <h2 className="form-title">Login</h2>
+            <form onSubmit={(e) => handleSubmit(e, "login")} className="form-box">
+              <input
+                className="input"
+                type="email"
+                name="email"
+                placeholder="Email"
+                onChange={handleChange}
+                value={formData.email}
+                required
+              />
+              <input
+                className="input"
+                type="password"
+                name="password"
+                placeholder="Password"
+                onChange={handleChange}
+                value={formData.password}
+                required
+              />
+              <button className="btn mt-4">Login</button>
+            </form>
+            <p className="text-gray-400 text-sm mt-8 text-center">
               Don’t have an account?
-              <span onClick={() => navigate("/signup")}> Register</span>
             </p>
-          </form>
+            <button onClick={() => navigate("/signup")} className="link mx-auto block">
+              Sign Up
+            </button>
+          </div>
+        </div>
 
-          {/* REGISTER FORM */}
-          <form onSubmit={handleSubmit} className="form register-form">
-            <h2 className="form-title">Create Account</h2>
-
-            <input
-              className="auth-input"
-              type="text"
-              name="username"
-              placeholder="Name"
-              onChange={handleChange}
-              required
-            />
-
-            <input
-              className="auth-input"
-              type="email"
-              name="email"
-              placeholder="Email"
-              onChange={handleChange}
-              required
-            />
-
-            <input
-              className="auth-input"
-              type="password"
-              name="password"
-              placeholder="Password"
-              onChange={handleChange}
-              required
-            />
-
-            <input
-              className="auth-input"
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              onChange={handleChange}
-              required
-            />
-
-            <button className="auth-btn">Register</button>
-
-            <p className="switch-text">
+        {/* REGISTER FORM */}
+        <div className="form-container register-container">
+          <div className="form-content">
+            <h2 className="form-title">Register</h2>
+            <form onSubmit={(e) => handleSubmit(e, "register")} className="form-box">
+              <input
+                className="input"
+                type="text"
+                name="username"
+                placeholder="Username"
+                onChange={handleChange}
+                value={formData.username}
+                required
+              />
+              <input
+                className="input"
+                type="email"
+                name="email"
+                placeholder="Email"
+                onChange={handleChange}
+                value={formData.email}
+                required
+              />
+              <input
+                className="input"
+                type="password"
+                name="password"
+                placeholder="Password"
+                onChange={handleChange}
+                value={formData.password}
+                required
+              />
+              <input
+                className="input"
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                onChange={handleChange}
+                value={formData.confirmPassword}
+                required
+              />
+              <button className="btn mt-4">Register</button>
+            </form>
+            <p className="text-gray-400 text-sm mt-6 text-center">
               Already have an account?
-              <span onClick={() => navigate("/login")}> Login</span>
             </p>
-          </form>
+            <button onClick={() => navigate("/login")} className="link mx-auto block">
+              Sign In
+            </button>
+          </div>
+        </div>
 
+        {/* ANIMATED OVERLAY */}
+        <div className="overlay-container">
+          <div className="overlay">
+            <div className="overlay-panel overlay-left">
+              <h1 className="title">JOIN <br /> US!</h1>
+            </div>
+            <div className="overlay-panel overlay-right">
+              <h1 className="title">WELCOME <br /> BACK!</h1>
+            </div>
+          </div>
         </div>
       </div>
     </div>
