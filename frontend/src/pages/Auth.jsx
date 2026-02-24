@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/auth.css";
 
-const BASE_URL = "https://wanderlog-backend-3nod.onrender.com";
+// ✅ Deployment-safe base URL
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -187,6 +188,7 @@ export default function Auth() {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
