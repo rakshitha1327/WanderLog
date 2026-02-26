@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/auth.css";
 
 // ✅ Deployment-safe base URL
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_API_URL || "https://wanderlog-backend-3nod.onrender.com";
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -50,7 +50,14 @@ export default function Auth() {
         }
 
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            email: data.email,
+            username: data.username,
+            name: data.username,
+          })
+        );
 
         navigate("/dashboard");
       } else {
