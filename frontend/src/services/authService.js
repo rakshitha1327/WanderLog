@@ -1,9 +1,8 @@
 import axios from "axios";
-
-const API_URL = "https://wanderlog-backend-3nod.onrender.com";
+import BASE_URL from "../config";
 
 export const loginUser = async (email, password) => {
-  const response = await axios.post(`${API_URL}/login`, {
+  const response = await axios.post(`${BASE_URL}/login`, {
     email,
     password,
   });
@@ -11,7 +10,7 @@ export const loginUser = async (email, password) => {
 };
 
 export const registerUser = async (username, email, password) => {
-  const response = await axios.post(`${API_URL}/register`, {
+  const response = await axios.post(`${BASE_URL}/register`, {
     username,
     email,
     password,

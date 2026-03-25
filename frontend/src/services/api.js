@@ -1,7 +1,8 @@
 import axios from "axios";
+import BASE_URL from "../config";
 
 const api = axios.create({
-  baseURL: "https://wanderlog-backend-3nod.onrender.com",
+  baseURL: BASE_URL,
 });
 
 api.interceptors.request.use((config) => {
@@ -14,7 +15,7 @@ api.interceptors.request.use((config) => {
     tokenPreview: token ? token.substring(0, 20) + "..." : "none",
     hasUser: !!user
   });
-  
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -32,7 +33,7 @@ api.interceptors.response.use(
       data: error.response?.data,
       headers: error.config?.headers
     });
-    
+
     if (error.response?.status === 403) {
       console.error("403 Forbidden - Authentication issue");
       // Clear invalid token and redirect to login
